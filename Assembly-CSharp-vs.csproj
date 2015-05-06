@@ -46,7 +46,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\LightningBolt.cs" />
+     <Compile Include="Assets\Scripts\General\GameManager.cs" />
+     <Compile Include="Assets\Scripts\General\LightningBolt.cs" />
+     <Compile Include="Assets\Scripts\Level\LevelManager.cs" />
+     <Compile Include="Assets\Scripts\Level\LevelSpawner.cs" />
+     <Compile Include="Assets\Scripts\Player\Player.cs" />
+     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
      <Compile Include="Assets\UnityProvidedAssets\Effects\ImageEffects\Scripts\Antialiasing.cs" />
      <Compile Include="Assets\UnityProvidedAssets\Effects\ImageEffects\Scripts\Bloom.cs" />
      <Compile Include="Assets\UnityProvidedAssets\Effects\ImageEffects\Scripts\BloomAndFlares.cs" />
