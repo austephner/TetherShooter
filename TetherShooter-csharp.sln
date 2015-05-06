@@ -1,6 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
+Project("{F8596EF6-538C-54B0-A7F2-84715437B7D2}") = "TetherShooter", "Assembly-CSharp-firstpass-vs.csproj", "{D53803EE-CEDB-FF07-846D-36ADC063ECEB}"
+EndProject
 Project("{F8596EF6-538C-54B0-A7F2-84715437B7D2}") = "TetherShooter", "Assembly-CSharp-vs.csproj", "{DECD4EAC-9940-CA81-C867-668B2AFFEE01}"
 EndProject
 Project("{F8596EF6-538C-54B0-A7F2-84715437B7D2}") = "TetherShooter", "Assembly-CSharp-Editor-vs.csproj", "{A037F01E-257D-C966-6C22-E03F78110ABB}"
@@ -11,6 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D53803EE-CEDB-FF07-846D-36ADC063ECEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D53803EE-CEDB-FF07-846D-36ADC063ECEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D53803EE-CEDB-FF07-846D-36ADC063ECEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D53803EE-CEDB-FF07-846D-36ADC063ECEB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DECD4EAC-9940-CA81-C867-668B2AFFEE01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DECD4EAC-9940-CA81-C867-668B2AFFEE01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DECD4EAC-9940-CA81-C867-668B2AFFEE01}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -23,7 +29,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-							GlobalSection(MonoDevelopProperties) = preSolution
+											GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
