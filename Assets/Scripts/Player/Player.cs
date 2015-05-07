@@ -15,18 +15,29 @@ public enum PlayerNumber
 public class Player : MonoBehaviour 
 {
     // Settings
-    string name = "Player";
-    PlayerNumber IdentificationNumber = PlayerNumber.PlayerOne; 
+    public string name = "Player";
+    public PlayerNumber IdentificationNumber = PlayerNumber.PlayerOne;
+    public PlayerController ControllerObject = null;
 
 
     // Private
-    int Score = 0; 
+    int Score = 0;
+    GameManager GM = null;
 
 
 	// Use this for initialization
 	void Start () 
     {
-	
+        // Check if the playerController object is null. 
+        // If so, look for a playerController object attached to the parent of this object. 
+        if (!ControllerObject) if (GetComponent<PlayerController>()) ControllerObject = GetComponent<PlayerController>();
+
+        // Try and find the game manager object
+        if (!GM)
+        {
+            if (FindObjectOfType<GameManager>()) GM = FindObjectOfType<GameManager>();
+            else Debug.LogError("WARNING ... Failed to find a GameManager object for this playerobject.");
+        }
 	}
 	
 	// Update is called once per frame
