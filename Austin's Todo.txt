@@ -1,0 +1,48 @@
+= = = = = = = = = = = = = = =
+CURRENT FOCUS: Ship movement
+= = = = = = = = = = = = = = =
+
+Current Goals: 
+  - Set screen boundaries
+  - Set minimum and maximum tether separation distances
+  - Refine movement to make it more appealing
+
+Completed Goals: 
+  - Controller support for movement
+  - Basic movement has been added, can move either tether
+  - Set up a decent system for controlling settings
+
+Long Term Goals: 
+  - Multiplayer support
+
+Untested: 
+  - Keyboard movement (I copy/pasted most of the joystick stuff)
+  - Multiplayer ... impossible to test at the moment. 
+
+
+= = = = = = = = = = = = = = =
+OTHER GOALS
+= = = = = = = = = = = = = = =
+
+- LevelEditor
+- Weapons
+- GameManager
+- Player Script interactions
+- MenuBehaviours
+
+
+= = = = = = = = = = = = = = =
+REQUESTS / REPORTS / ISSUES?
+= = = = = = = = = = = = = = = 
+
+
+
+
+
+
+
+
+
+
+
+

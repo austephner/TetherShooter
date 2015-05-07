@@ -35,7 +35,11 @@ public class Player : MonoBehaviour
         // Try and find the game manager object
         if (!GM)
         {
-            if (FindObjectOfType<GameManager>()) GM = FindObjectOfType<GameManager>();
+            if (FindObjectOfType<GameManager>())
+            {
+                GM = FindObjectOfType<GameManager>();
+                // GM.AddPlayer(this); 
+            }
             else Debug.LogError("WARNING ... Failed to find a GameManager object for this playerobject.");
         }
 	}

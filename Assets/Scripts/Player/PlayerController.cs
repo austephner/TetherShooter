@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
                       PauseJoystickButton = "", 
                       FireJoystickWeaponButton = "";
 
+        public ControllerSettings() { /* empty constructor (on purpose) */ }
         public void SetControls(PlayerNumber pn)
         {
             string JoystickName = "Joystick";
@@ -44,7 +45,9 @@ public class PlayerController : MonoBehaviour
             LeftJoystickVerticalNodeAxis = JoystickName + "_Vertical_Left";
 
             RightJoystickHorizontalNodeAxis = JoystickName + "_Horizontal_Right";
-            RightJoystickVerticalNodeAxis = JoystickName + "_Vertical_Right"; 
+            RightJoystickVerticalNodeAxis = JoystickName + "_Vertical_Right";
+
+            FireJoystickWeaponButton = JoystickName + "_Fire1";
         }
     }
 
@@ -53,8 +56,9 @@ public class PlayerController : MonoBehaviour
     public bool UseKeyboard = false; 
     public bool UseJoystick = true;
     public Player PlayerObject = null;
-    public Transform NodeOne, NodeTwo, Ship; // ........................... Components of the ship
-    public float NodeSpeedMultiplier = 1f; // ............................. How fast the nodes can move with player input
+    public Transform NodeLeft, NodeRight, Ship; // ........................ Components of the ship
+    public float MaxNodeSpeed = 10f; // ................................... How fast a node can move
+    public float NodeSpeedMultiplier = 1f; // ............................. How quickly nodes accelerate... 1 has no effect
     public float ElasticityMultiplier = .5f; // ........................... The reactionary stretchiness of the nodes' distance from one another
     public float ElasticityMaximum = .8f; // .............................. The highest percentage before max elasticity is achieved
     public float ElasticityMinimum = .2f; // .............................. The opposite of the above
@@ -66,8 +70,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 CenterPoint = new Vector3(0,0,0);
     private float NodeDistance = 0f;
     private float ElasticityModifier = 0f;
-    private ControllerSettings CurrentControls;
-    private GameManager GM = null; 
+    private ControllerSettings CurrentControls = new ControllerSettings();
+    private GameManager GM = null;
 
 	// Use this for initialization
 	void Start () 
@@ -111,13 +115,19 @@ public class PlayerController : MonoBehaviour
 
         // Call TestInput
         TestInput(DebugPlayer); 
+
+        // Other Debug stuff
+        if (DebugPlayer)
+        {
+            Debug.Log(PlayerObject.IdentificationNumber.ToString()); 
+        }
 	}
 
     // CalculationUpdate() :: Does updates to all variables requiring calculations
     void CalculationUpdate()
     {
         // Get node distance
-        NodeDistance = Vector3.Distance(NodeOne.position, NodeTwo.position);
+        NodeDistance = Vector3.Distance(NodeLeft.position, NodeRight.position);
 
         // Calculate the ElasticityModifier (the closer the NodeDistance is to max, the closer this number is to 1)
         // Then round off the number a bit to make the controls seem a little more substancial
@@ -126,7 +136,7 @@ public class PlayerController : MonoBehaviour
         if (ElasticityModifier > ElasticityMaximum) ElasticityModifier = 1;
 
         // Get Center point & adjust y zero
-        CenterPoint = (NodeOne.position + NodeTwo.position) / 2;
+        CenterPoint = (NodeLeft.position + NodeRight.position) / 2;
         CenterPoint = new Vector3(CenterPoint.x, 0, CenterPoint.z);
 
         // Slerp ship towards center point & adjust y zero
@@ -137,57 +147,102 @@ public class PlayerController : MonoBehaviour
     // KeyboardControls() :: Do keyboard control update
     void KeyboardControls()
     {
-        // Left Node Vertical 
-        if (Input.GetAxis(CurrentControls.LeftKeyboardVerticalNodeAxis) != 0)
+        Rigidbody nrb_left = NodeLeft.GetComponent<Rigidbody>();
+        Rigidbody nrb_right = NodeRight.GetComponent<Rigidbody>();
+ 
+        if (nrb_left.velocity.magnitude < MaxNodeSpeed)
         {
+            // Left Node Vertical
+            if (Input.GetAxis(CurrentControls.LeftKeyboardVerticalNodeAxis) != 0)
+            {
+                nrb_left.velocity += new Vector3(
+                    0f,
+                    0f,
+                    Input.GetAxis(CurrentControls.LeftKeyboardVerticalNodeAxis) * NodeSpeedMultiplier);
+            }
 
+            // Left Node Horizontal
+            if (Input.GetAxis(CurrentControls.LeftKeyboardHorizontalNodeAxis) != 0)
+            {
+                nrb_left.velocity += new Vector3(
+                    Input.GetAxis(CurrentControls.LeftKeyboardHorizontalNodeAxis) * NodeSpeedMultiplier,
+                    0f,
+                    0f);
+            }
         }
 
-        // Left Node Horizontal
-        if (Input.GetAxis(CurrentControls.LeftKeyboardHorizontalNodeAxis) != 0)
+        if (nrb_right.velocity.magnitude < MaxNodeSpeed)
         {
+            // Right Node Vertical
+            if (Input.GetAxis(CurrentControls.RightKeyboardVerticalNodeAxis) != 0)
+            {
+                nrb_right.velocity += new Vector3(
+                    0f,
+                    0f,
+                    Input.GetAxis(CurrentControls.RightKeyboardVerticalNodeAxis) * NodeSpeedMultiplier);
+            }
 
-        }
-
-        // Right Node Vertical
-        if (Input.GetAxis(CurrentControls.RightKeyboardVerticalNodeAxis) != 0)
-        {
-
-        }
-
-        // Right Node Horizontal
-        if (Input.GetAxis(CurrentControls.RightKeyboardHorizontalNodeAxis) != 0)
-        {
-
+            // Right Node Horizontal
+            if (Input.GetAxis(CurrentControls.RightKeyboardHorizontalNodeAxis) != 0)
+            {
+                nrb_right.velocity += new Vector3(
+                    Input.GetAxis(CurrentControls.RightKeyboardHorizontalNodeAxis) * NodeSpeedMultiplier,
+                    0f,
+                    0f);
+            }
         }
     }
 
     // JoystickControls() :: Do joystick / handheld controller controls. 
     void JoystickControls()
     {
-        // Left Node Vertical 
-        if (Input.GetAxis(CurrentControls.LeftJoystickVerticalNodeAxis) != 0)
-        {
+        Rigidbody nrb_left = NodeLeft.GetComponent<Rigidbody>();
+        Rigidbody nrb_right = NodeRight.GetComponent<Rigidbody>(); 
 
+        if (nrb_left.velocity.magnitude < MaxNodeSpeed)
+        {
+            // Left Node Vertical
+            if (Input.GetAxis(CurrentControls.LeftJoystickVerticalNodeAxis) != 0)
+            {
+                nrb_left.velocity += new Vector3(
+                    0f,
+                    0f,
+                    Input.GetAxis(CurrentControls.LeftJoystickVerticalNodeAxis) * NodeSpeedMultiplier);
+            }
+
+            // Left Node Horizontal
+            if (Input.GetAxis(CurrentControls.LeftJoystickHorizontalNodeAxis) != 0)
+            {
+                nrb_left.velocity += new Vector3(
+                    Input.GetAxis(CurrentControls.LeftJoystickHorizontalNodeAxis) * NodeSpeedMultiplier,
+                    0f,
+                    0f);
+            }
         }
 
-        // Left Node Horizontal
-        if (Input.GetAxis(CurrentControls.LeftJoystickHorizontalNodeAxis) != 0)
+        if (nrb_right.velocity.magnitude < MaxNodeSpeed)
         {
+            // Right Node Vertical
+            if (Input.GetAxis(CurrentControls.RightJoystickVerticalNodeAxis) != 0)
+            {
+                nrb_right.velocity += new Vector3(
+                    0f,
+                    0f,
+                    Input.GetAxis(CurrentControls.RightJoystickVerticalNodeAxis) * NodeSpeedMultiplier);
+            }
 
+            // Right Node Horizontal
+            if (Input.GetAxis(CurrentControls.RightJoystickHorizontalNodeAxis) != 0)
+            {
+                nrb_right.velocity += new Vector3(
+                    Input.GetAxis(CurrentControls.RightJoystickHorizontalNodeAxis) * NodeSpeedMultiplier,
+                    0f,
+                    0f);
+            }
         }
 
-        // Right Node Vertical
-        if (Input.GetAxis(CurrentControls.RightJoystickVerticalNodeAxis) != 0)
-        {
-
-        }
-
-        // Right Node Horizontal
-        if (Input.GetAxis(CurrentControls.RightJoystickHorizontalNodeAxis) != 0)
-        {
-
-        }
+        // Fire1
+        if (Input.GetButton(CurrentControls.FireJoystickWeaponButton)) Debug.Log("Fired"); 
 
     }
 
@@ -198,26 +253,26 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W))
         {
-            NodeOne.transform.position += transform.forward;
-            NodeTwo.transform.position += transform.forward; 
+            NodeLeft.transform.position += transform.forward;
+            NodeRight.transform.position += transform.forward; 
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            NodeOne.transform.position -= transform.forward;
-            NodeTwo.transform.position -= transform.forward;
+            NodeLeft.transform.position -= transform.forward;
+            NodeRight.transform.position -= transform.forward;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            NodeOne.transform.position -= transform.right;
-            NodeTwo.transform.position -= transform.right;
+            NodeLeft.transform.position -= transform.right;
+            NodeRight.transform.position -= transform.right;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            NodeOne.transform.position += transform.right;
-            NodeTwo.transform.position += transform.right;
+            NodeLeft.transform.position += transform.right;
+            NodeRight.transform.position += transform.right;
         }
     }
 
@@ -228,7 +283,13 @@ public class PlayerController : MonoBehaviour
 
         Rect DebugRect = new Rect(0, 0, Screen.width, Screen.height);
         GUI.Label(DebugRect, "Center Point: " + CenterPoint.ToString() + ", Ship Point: " + Ship.transform.position.ToString() + "\n" +
-                             "Node1 Point: " + NodeOne.transform.position.ToString() + ", Node2 Point: " + NodeTwo.position.ToString() + "\n" +
-                             "Node Distance = " + NodeDistance.ToString()); 
+                             "Node1 Point: " + NodeLeft.transform.position.ToString() + ", Node2 Point: " + NodeRight.position.ToString() + "\n" +
+                             "Node Distance = " + NodeDistance.ToString() + "\n" +
+                             "LeftJoystickVerticalNodeAxis: " + Input.GetAxis(CurrentControls.LeftJoystickVerticalNodeAxis).ToString() + "\n" +
+                             "LeftJoystickHorizontalNodeAxis: " + Input.GetAxis(CurrentControls.LeftJoystickHorizontalNodeAxis).ToString() + "\n" +
+                             "RightJoystickVerticalNodeAxis: " + Input.GetAxis(CurrentControls.RightJoystickVerticalNodeAxis).ToString() + "\n" +
+                             "RightJoystickHorizontalNodeAxis: " + Input.GetAxis(CurrentControls.RightJoystickHorizontalNodeAxis).ToString() + "\n" +
+                             "(LN) Magnitude of " + NodeLeft.GetComponent<Rigidbody>().velocity.magnitude.ToString() + "\n" +
+                             "(RN) Magnitude of " + NodeRight.GetComponent<Rigidbody>().velocity.magnitude.ToString()); 
     }
 }
