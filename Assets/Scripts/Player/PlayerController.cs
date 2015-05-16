@@ -55,8 +55,8 @@ public class PlayerController : MonoBehaviour
     public bool DebugPlayer = true; 
     public bool UseKeyboard = false; 
     public bool UseJoystick = true;
-    public Player PlayerObject = null;
-    public Transform NodeLeft, NodeRight, Ship; // ........................ Components of the ship
+    public Weapon PlayerWeapon = null;
+    public Transform NodeLeft, NodeRight, Ship, ElasticPosition; // ....... Components of the ship
     public float MaxNodeSpeed = 10f; // ................................... How fast a node can move
     public float NodeSpeedMultiplier = 1f; // ............................. How quickly nodes accelerate... 1 has no effect
     public float ElasticityMultiplier = .5f; // ........................... The reactionary stretchiness of the nodes' distance from one another
@@ -64,9 +64,12 @@ public class PlayerController : MonoBehaviour
     public float ElasticityMinimum = .2f; // .............................. The opposite of the above
     public float BaseShipSpeed = .01f; // ................................. How quickly the player's ship slerp's towards the nodes' average
     public float MaxNodeDistance = 900; // ................................ Max distance between the two nodes before horizontal message
+    public float MinNodeDistance = 50; 
     public Vector3 PositionalOffset = new Vector3(0, 0, 0); // ............ How far away from the center average the ship will rest at
 
+
     // Private
+    private Player PlayerObject = null;
     private Vector3 CenterPoint = new Vector3(0,0,0);
     private float NodeDistance = 0f;
     private float ElasticityModifier = 0f;
@@ -139,9 +142,12 @@ public class PlayerController : MonoBehaviour
         CenterPoint = (NodeLeft.position + NodeRight.position) / 2;
         CenterPoint = new Vector3(CenterPoint.x, 0, CenterPoint.z);
 
-        // Slerp ship towards center point & adjust y zero
-        Ship.position = Vector3.Slerp(Ship.position, CenterPoint, BaseShipSpeed + (ElasticityModifier * ElasticityMultiplier));
-        Ship.position = new Vector3(Ship.position.x, 0, Ship.position.z); 
+        // Make the elastic position rapidly fly towards the centerpoint, giving its position to the ship's with a slerp
+        ElasticPosition.LookAt(CenterPoint);
+        ElasticPosition.GetComponent<Rigidbody>().AddForce(ElasticPosition.transform.forward * (ElasticityMultiplier * Vector3.Distance(ElasticPosition.position, CenterPoint) * 2), ForceMode.Acceleration);
+        //ElasticPosition.GetComponent<Rigidbody>().AddForce(ElasticPosition.transform.forward, ForceMode.Acceleration); 
+        Ship.position = Vector3.Slerp(Ship.position, ElasticPosition.position, BaseShipSpeed + (ElasticityModifier * ElasticityMultiplier));
+        Ship.position = new Vector3(Ship.position.x, 0, Ship.position.z); // for maintaining a 0 y value
     }
 
     // KeyboardControls() :: Do keyboard control update
@@ -149,7 +155,8 @@ public class PlayerController : MonoBehaviour
     {
         Rigidbody nrb_left = NodeLeft.GetComponent<Rigidbody>();
         Rigidbody nrb_right = NodeRight.GetComponent<Rigidbody>();
- 
+        
+        // Movement (left node)
         if (nrb_left.velocity.magnitude < MaxNodeSpeed)
         {
             // Left Node Vertical
@@ -171,6 +178,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // Movement (right node)
         if (nrb_right.velocity.magnitude < MaxNodeSpeed)
         {
             // Right Node Vertical
@@ -191,19 +199,35 @@ public class PlayerController : MonoBehaviour
                     0f);
             }
         }
+
+        // Firing
+        if (Input.GetButton(CurrentControls.FireKeyboardWeaponButton))
+        {
+            PlayerWeapon.Fire(); 
+        }
+
     }
 
     // JoystickControls() :: Do joystick / handheld controller controls. 
     void JoystickControls()
     {
         Rigidbody nrb_left = NodeLeft.GetComponent<Rigidbody>();
-        Rigidbody nrb_right = NodeRight.GetComponent<Rigidbody>(); 
+        Rigidbody nrb_right = NodeRight.GetComponent<Rigidbody>();
+        bool DoLeftHorizontalMovement = true, DoLeftVerticalMovement = true, DoRightMovement = true; 
 
+        // Movement (left node)
         if (nrb_left.velocity.magnitude < MaxNodeSpeed)
         {
             // Left Node Vertical
             if (Input.GetAxis(CurrentControls.LeftJoystickVerticalNodeAxis) != 0)
             {
+                //// Check vertical constraints (moving downwards and upwards)
+                //if (Input.GetAxis(CurrentControls.LeftJoystickVerticalNodeAxis) < 0 && NodeDistance < MinNodeDistance ||
+                //    Input.GetAxis(CurrentControls.LeftJoystickVerticalNodeAxis) > 0 && NodeDistance > MaxNodeDistance)
+                //    DoLeftVerticalMovement = false; 
+
+                // Move node vertical
+                if (DoLeftVerticalMovement)
                 nrb_left.velocity += new Vector3(
                     0f,
                     0f,
@@ -213,6 +237,13 @@ public class PlayerController : MonoBehaviour
             // Left Node Horizontal
             if (Input.GetAxis(CurrentControls.LeftJoystickHorizontalNodeAxis) != 0)
             {
+                //// Check vertical constraints (moving downwards and upwards)
+                //if (Input.GetAxis(CurrentControls.LeftJoystickHorizontalNodeAxis) < 0 && NodeDistance < MinNodeDistance ||
+                //    Input.GetAxis(CurrentControls.LeftJoystickHorizontalNodeAxis) > 0 && NodeDistance > MaxNodeDistance)
+                //    DoLeftHorizontalMovement = false; 
+
+                // Move Node Horizontal
+                if (DoLeftHorizontalMovement)
                 nrb_left.velocity += new Vector3(
                     Input.GetAxis(CurrentControls.LeftJoystickHorizontalNodeAxis) * NodeSpeedMultiplier,
                     0f,
@@ -220,6 +251,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // Movement (right node)
         if (nrb_right.velocity.magnitude < MaxNodeSpeed)
         {
             // Right Node Vertical
@@ -232,7 +264,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // Right Node Horizontal
-            if (Input.GetAxis(CurrentControls.RightJoystickHorizontalNodeAxis) != 0)
+            if (Input.GetAxis(CurrentControls.RightJoystickHorizontalNodeAxis) != 0 && DoRightMovement)
             {
                 nrb_right.velocity += new Vector3(
                     Input.GetAxis(CurrentControls.RightJoystickHorizontalNodeAxis) * NodeSpeedMultiplier,
@@ -242,8 +274,19 @@ public class PlayerController : MonoBehaviour
         }
 
         // Fire1
-        if (Input.GetButton(CurrentControls.FireJoystickWeaponButton)) Debug.Log("Fired"); 
+        if (Input.GetButton(CurrentControls.FireJoystickWeaponButton))
+        {
+            PlayerWeapon.Fire(); 
+        }
 
+    }
+
+    // CheckMovementConstraints(leftNodeAxis, rightNodeAxis) :: returns true if the node can move in the direction without conflicting any of the rules (min/max distances)
+    bool CheckMovementConstraints(float leftNodeAxis, float rightNodeAxis)
+    {
+        // Check left node
+
+        return true; 
     }
 
     // TestInput(enabled) :: Does testing input, won't as long as passed a false value. Subject to constant change

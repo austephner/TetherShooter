@@ -52,6 +52,9 @@
      <Compile Include="Assets\Scripts\Level\LevelSpawner.cs" />
      <Compile Include="Assets\Scripts\Player\Player.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\Projectile &amp; Weapons\Projectile.cs" />
+     <Compile Include="Assets\Scripts\Projectile &amp; Weapons\ProjectilePool.cs" />
+     <Compile Include="Assets\Scripts\Projectile &amp; Weapons\Weapon.cs" />
      <Compile Include="Assets\UnityProvidedAssets\Effects\ImageEffects\Scripts\Antialiasing.cs" />
      <Compile Include="Assets\UnityProvidedAssets\Effects\ImageEffects\Scripts\Bloom.cs" />
      <Compile Include="Assets\UnityProvidedAssets\Effects\ImageEffects\Scripts\BloomAndFlares.cs" />

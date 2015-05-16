@@ -1,0 +1,15 @@
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\Assembly-CSharp.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\Assembly-CSharp.pdb
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\UnityEditor.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\UnityEngine.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\UnityEngine.UI.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\Mono.Cecil.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\Unity.SerializationLogic.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\Unity.CecilTools.dll
+C:\Users\Austin\Game Development\TetherShooter\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Austin\Game Development\TetherShooter\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
+C:\Users\Austin\Game Development\TetherShooter\obj\Debug\Assembly-CSharp.dll
+C:\Users\Austin\Game Development\TetherShooter\obj\Debug\Assembly-CSharp.pdb
